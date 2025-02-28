@@ -1,4 +1,4 @@
-package azizi.ahmed.reader.ui.theme
+package azizi.ahmed.reader.packages.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
