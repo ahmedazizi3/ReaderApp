@@ -1,6 +1,7 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.2"
 coilCompose = "2.5.0"
+coreSplashscreenVersion = "1.0.1"
 firebaseBom = "33.10.0"
 hiltAndroid = "2.52"
 hiltAndroidCompiler = "2.52"
@@ -14,17 +15,18 @@ kotlinxCoroutinesAndroid = "1.9.0"
 kotlinxCoroutinesCore = "1.6.4"
 kotlinxCoroutinesPlayServices = "1.9.0"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.0"
-composeBom = "2024.04.01"
-lifecycleRuntimeKtxVersion = "2.6.2"
+activityCompose = "1.10.1"
+composeBom = "2025.02.00"
 lifecycleViewmodelKtx = "2.8.7"
+navigationCompose = "2.8.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreenVersion" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltNavigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-androidx-lifecycle-runtime-ktx-v262 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }

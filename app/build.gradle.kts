@@ -79,9 +79,13 @@ dependencies {
 
 //    View Model and Runtime Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
 
 //    Coil
     implementation(libs.coil.compose)
 
+//    Navigation
+    implementation(libs.androidx.navigation.compose)
+
+//    Splash Screen
+    implementation(libs.androidx.core.splashscreen)
 }
