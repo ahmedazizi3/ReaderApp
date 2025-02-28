@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "829454436812",
+    "project_id": "ahmedazizireader",
+    "storage_bucket": "ahmedazizireader.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:829454436812:android:1461f7d4e287b183313569",
+        "android_client_info": {
+          "package_name": "azizi.ahmed.reader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb7Ue_IkVhpWJGHZx7E563uh1E1fzpsn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
