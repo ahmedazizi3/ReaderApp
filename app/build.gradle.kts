@@ -77,7 +77,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
 
-//    View Model and Runtime Lifecycle
+//    Lifecycle ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
 //    Coil
