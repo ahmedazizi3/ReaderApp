@@ -38,7 +38,7 @@ import azizi.ahmed.reader.packages.components.common.ReaderTextField
 @Composable
 fun LogInScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navigateToSignUpScreen: () -> Unit = {}
 ) {
 
     val email = rememberSaveable {
@@ -50,105 +50,100 @@ fun LogInScreen(
 
     val visualTransformation = PasswordVisualTransformation()
 
+
     Column(
         modifier = modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        Text(
             modifier = modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 60.dp),
+            text = "Reader",
+            fontSize = 40.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = Color.Red,
+            fontStyle = FontStyle.Italic
+        )
+
+        Spacer(modifier = modifier.height(105.dp))
+
+        ReaderTextField(
+            textFieldValue = email,
+            readerLabel = "Email",
+            isSingleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email
+            )
+        )
+
+        Spacer(modifier = modifier.height(15.dp))
+
+        ReaderTextField(
+            textFieldValue = password,
+            readerLabel = "Password",
+            isSingleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password
+            ),
+            visualTransformation = visualTransformation
+        )
+
+        Spacer(modifier = modifier.height(25.dp))
+
+        Button(
+            enabled = email.value.isNotEmpty() && password.value.isNotEmpty(),
+            onClick = {
+                Log.d("Form", "Login Screen, Email: $email, Password: $password")
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor =  Color.Red,
+                contentColor = Color.White,
+                disabledContainerColor = Color.LightGray,
+                disabledContentColor = Color.White
+            ),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Text(
-                modifier = modifier
-                    .padding(top = 60.dp),
-                text = "Reader",
-                fontSize = 40.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.Red,
-                fontStyle = FontStyle.Italic
+                text = "Login",
+                fontSize = 25.sp
             )
+        }
 
-            Spacer(modifier = modifier.height(105.dp))
-
-            ReaderTextField(
-                textFieldValue = email,
-                readerLabel = "Email",
-                isSingleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email
-                )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "New to Reader?",
+                color = Color.Black,
+                fontSize = 20.sp
             )
-
-            Spacer(modifier = modifier.height(15.dp))
-
-            ReaderTextField(
-                textFieldValue = password,
-                readerLabel = "Password",
-                isSingleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password
-                ),
-                visualTransformation = visualTransformation
-            )
-
-            Spacer(modifier = modifier.height(25.dp))
-
-            Button(
-                enabled = email.value.isNotEmpty() && password.value.isNotEmpty(),
-                onClick = {
-                    Log.d("Form", "Login Screen, Email: $email, Password: $password")
-                },
+            TextButton(
+                onClick = {},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor =  Color.Red,
-                    contentColor = Color.White,
-                    disabledContainerColor = Color.LightGray,
-                    disabledContentColor = Color.White
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Blue
                 ),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                contentPadding = PaddingValues()
             ) {
                 Text(
-                    text = "Login",
-                    fontSize = 25.sp
-                )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "New to Reader?",
-                    color = Color.Black,
+                    text = "Sign Up",
+                    modifier = modifier.clickable {
+                        navigateToSignUpScreen()
+                    },
+                    fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-                TextButton(
-                    onClick = {},
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color.Blue
-                    ),
-                    contentPadding = PaddingValues()
-                ) {
-                    Text(
-                        text = "Sign Up",
-                        modifier = modifier.clickable {
-
-                        },
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                }
-
             }
+
         }
     }
+
 
 }
