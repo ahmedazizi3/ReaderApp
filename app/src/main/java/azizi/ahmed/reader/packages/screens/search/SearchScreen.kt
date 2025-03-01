@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier, navController: NavHostController) {
+fun SearchScreen(
+    modifier: Modifier = Modifier
+) {
 
 }
