@@ -14,9 +14,7 @@ import azizi.ahmed.reader.packages.screens.stats.StatsScreen
 import azizi.ahmed.reader.packages.screens.update.UpdateScreen
 
 @Composable
-fun ReaderNavigation(
-    modifier: Modifier = Modifier,
-) {
+fun ReaderNavigation() {
     val navController = rememberNavController()
 
     NavHost(
@@ -24,27 +22,29 @@ fun ReaderNavigation(
         startDestination = ReaderScreensHolder.LoginScreen.route
     ) {
         composable(ReaderScreensHolder.DetailsScreen.route) {
-            DetailsScreen(navController = navController)
+            DetailsScreen()
         }
         composable(ReaderScreensHolder.HomeScreen.route) {
-            HomeScreen(navController = navController)
+            HomeScreen()
         }
         composable(ReaderScreensHolder.LoginScreen.route) {
-            LogInScreen(navController = navController)
+            LogInScreen {
+                navController.navigate(ReaderScreensHolder.SignUpScreen.route)
+            }
         }
         composable(ReaderScreensHolder.SearchScreen.route) {
-            SearchScreen(navController = navController)
+            SearchScreen()
         }
         composable(ReaderScreensHolder.SignUpScreen.route) {
-            SignUpScreen(navController = navController)
+            SignUpScreen {
+                navController.navigate(ReaderScreensHolder.LoginScreen.route)
+            }
         }
         composable(ReaderScreensHolder.StatsScreen.route) {
-            StatsScreen(navController = navController)
+            StatsScreen()
         }
         composable(ReaderScreensHolder.UpdateScreen.route) {
-            UpdateScreen(navController = navController)
-
+            UpdateScreen()
         }
     }
-
 }
