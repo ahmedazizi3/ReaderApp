@@ -23,28 +23,33 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import azizi.ahmed.reader.packages.components.common.ReaderTextField
 
 @Composable
 fun LogInScreen(
     modifier: Modifier = Modifier,
-    navigateToSignUpScreen: () -> Unit = {}
-) {
+    viewModel: LogInScreenViewModel = viewModel(),
+    navigateToSignUpScreen: () -> Unit = {},
+    navigateToHomeScreen: () -> Unit = {}
 
+) {
+    // State variables to hold the email and password input values
     val email = rememberSaveable {
         mutableStateOf("")
     }
     val password = rememberSaveable {
         mutableStateOf("")
     }
-
     val visualTransformation = PasswordVisualTransformation()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
 
     Column(
@@ -92,7 +97,14 @@ fun LogInScreen(
         Button(
             enabled = email.value.isNotEmpty() && password.value.isNotEmpty(),
             onClick = {
-                Log.d("Form", "Login Screen, Email: $email, Password: $password")
+                keyboardController?.hide()
+                viewModel.signInWithEmailAndPassword(
+                    email = email.value,
+                    password = password.value
+                ) {
+                    Log.d("FB", "LogInScreen: navigateToHomeScreen")
+                    navigateToHomeScreen()
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor =  Color.Red,
@@ -116,7 +128,7 @@ fun LogInScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "New to Reader?",
+                text = "New to Reader? ",
                 color = Color.Black,
                 fontSize = 20.sp
             )
@@ -130,16 +142,15 @@ fun LogInScreen(
             ) {
                 Text(
                     text = "Sign Up",
-                    modifier = modifier.clickable {
+                    modifier = modifier
+                        .padding(start = 5.dp)
+                        .clickable {
                         navigateToSignUpScreen()
                     },
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             }
-
         }
     }
-
-
 }
