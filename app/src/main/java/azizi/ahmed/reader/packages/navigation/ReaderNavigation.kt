@@ -11,37 +11,80 @@ import azizi.ahmed.reader.packages.screens.search.SearchScreen
 import azizi.ahmed.reader.packages.screens.signUp.SignUpScreen
 import azizi.ahmed.reader.packages.screens.stats.StatsScreen
 import azizi.ahmed.reader.packages.screens.update.UpdateScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ReaderNavigation() {
     val navController = rememberNavController()
+    val startDestination = if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+        ReaderScreensHolder.LoginScreen.route
+    } else {
+        ReaderScreensHolder.HomeScreen.route
+    }
 
     NavHost(
         navController = navController,
-        startDestination = ReaderScreensHolder.LoginScreen.route
+        startDestination = startDestination
     ) {
+//        Define all the composable screens here
+
+//        DetailsScreen is typically used to show details of a specific item
         composable(ReaderScreensHolder.DetailsScreen.route) {
             DetailsScreen()
         }
+
+//        HomeScreen is the main screen of the app
         composable(ReaderScreensHolder.HomeScreen.route) {
-            HomeScreen()
+            HomeScreen(
+                navController = navController,
+                logout = {
+                    FirebaseAuth.getInstance().signOut().run {
+                        navController.navigate(ReaderScreensHolder.LoginScreen.route) {
+                            popUpTo(ReaderScreensHolder.HomeScreen.route) { inclusive = true }
+                        }
+                    }
+                },
+                navigateToStatsScreen = {
+                    navController.navigate(ReaderScreensHolder.StatsScreen.route)
+                }
+            )
         }
+
+//        LogInScreen is used for user authentication
         composable(ReaderScreensHolder.LoginScreen.route) {
-            LogInScreen {
-                navController.navigate(ReaderScreensHolder.SignUpScreen.route)
-            }
+            LogInScreen(
+                navigateToSignUpScreen = {
+                    navController.navigate(ReaderScreensHolder.SignUpScreen.route)
+                },
+                navigateToHomeScreen = {
+                    navController.navigate(ReaderScreensHolder.HomeScreen.route)
+                }
+            )
         }
+
+//        SearchScreen is used to search for items
         composable(ReaderScreensHolder.SearchScreen.route) {
             SearchScreen()
         }
+
+//        SignUpScreen is used for user registration
         composable(ReaderScreensHolder.SignUpScreen.route) {
-            SignUpScreen {
-                navController.navigate(ReaderScreensHolder.LoginScreen.route)
-            }
+            SignUpScreen(
+                navigateToHomeScreen = {
+                    navController.navigate(ReaderScreensHolder.HomeScreen.route)
+                },
+                navigateToLoginScreen = {
+                    navController.navigate(ReaderScreensHolder.LoginScreen.route)
+                }
+            )
         }
+
+//        StatsScreen is used to show statistics or analytics
         composable(ReaderScreensHolder.StatsScreen.route) {
             StatsScreen()
         }
+
+//        UpdateScreen is used to update the app or user information
         composable(ReaderScreensHolder.UpdateScreen.route) {
             UpdateScreen()
         }
