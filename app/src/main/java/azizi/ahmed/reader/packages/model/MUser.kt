@@ -2,7 +2,9 @@ package azizi.ahmed.reader.packages.model
 
 data class MUser(
     val userID: String = "",
-    val displayName: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val userName: String = "",
     val email: String = "",
     val imageUrl: String = "",
     val isPremium: Boolean = false,
@@ -12,7 +14,9 @@ data class MUser(
     fun toMap(): MutableMap<String, Any> {
         return mutableMapOf(
             "userID" to userID,
-            "displayName" to displayName,
+            "userName" to userName,
+            "firstName" to firstName,
+            "lastName" to lastName,
             "email" to email,
             "imageUrl" to imageUrl,
             "isPremium" to isPremium,

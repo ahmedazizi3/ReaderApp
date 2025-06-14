@@ -32,9 +32,9 @@ class SignUpScreenViewModel: ViewModel() {
             ).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = task.result?.user
-                    val displayName = user?.email?.split('@')?.get(0)
+                    val userName = user?.email?.split('@')?.get(0)
                     val uid = user?.uid
-                    createUser(uid, displayName)
+                    createUser(uid, userName)
                     navigateToHomeScreen()
                 } else {
                     Log.d("FB", "createUserWithEmailAndPassword: ${task.exception?.message}")
@@ -44,7 +44,7 @@ class SignUpScreenViewModel: ViewModel() {
         }
     }
 
-    private fun createUser(userID: String?, displayName: String?) {
+    private fun createUser(userID: String?, userName: String?) {
         if (userID == null) {
             Log.e("FB", "UserID is null, cannot create Firestore user document.")
             return
@@ -52,7 +52,9 @@ class SignUpScreenViewModel: ViewModel() {
         val db = FirebaseFirestore.getInstance()
         val user = MUser(
             userID = userID,
-            displayName = displayName ?: "Unknown",
+            userName = userName ?: "Unknown",
+            firstName = userName ?: "Unknown",
+            lastName = userName ?: "Unknown",
             email = auth.currentUser?.email ?: "",
             imageUrl = "",
             isPremium = false,
