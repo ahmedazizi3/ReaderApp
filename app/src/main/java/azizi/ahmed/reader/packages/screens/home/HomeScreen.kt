@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,15 +21,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
-import azizi.ahmed.reader.packages.components.login.FABContent
+import azizi.ahmed.reader.packages.components.home.FABContent
+import azizi.ahmed.reader.packages.components.home.BookCard
+import azizi.ahmed.reader.packages.model.MBook
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     logout: () -> Unit = {},
-    navigateToStatsScreen: () -> Unit = {}
+    navigateToStatsScreen: () -> Unit = {},
+    navigateToDetailsScreen: (String) -> Unit = {}
 ) {
+    val currentUserName = FirebaseAuth.getInstance().currentUser?.displayName ?: "User"
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,8 +52,9 @@ fun HomeScreen(
             topBar = {
                 ReaderAppBar(
                     modifier = modifier,
-                    title = "Reader",
+                    title = "Ahmed",
                     showProfile = true,
+                    icon = Icons.AutoMirrored.Filled.ExitToApp,
                     navController = navController, // Replace with actual NavController if needed
                     logout = logout, // Pass the logout function to the app bar
                     navigateToStatsScreen = navigateToStatsScreen // Pass the navigation function to the app bar
@@ -67,19 +77,82 @@ fun HomeScreen(
                         .fillMaxSize()
                         .background(
                             color = Color.White
-                        ),
+                        )
+                        .padding(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
-
                 ) {
                     Text(
                         text = "Currently reading...",
                         modifier = modifier
                             .fillMaxWidth()
-                            .align(Alignment.Start),
+                            .align(Alignment.Start)
+                            .padding(bottom = 16.dp),
                         fontSize = 25.sp,
                         color = Color.Black
                     )
+
+                    BookCard(
+                        modifier = modifier
+                            .align(Alignment.Start),
+                        book = MBook(
+                            title = "The Art of War",
+                            author = "Ahmed Azizi",
+                            coverImageUrl = "http://books.google.com/books/content?id=mP4ADQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                        ),
+                        onCardClick = navigateToDetailsScreen
+                    )
+
+                    Text(
+                        text = "Reading List: ",
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Start)
+                            .padding(
+                                top = 20.dp,
+                                bottom = 16.dp
+                            ),
+                        fontSize = 25.sp,
+                        color = Color.Black
+                    )
+
+                    LazyRow(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        items(
+                            listOf(
+                                MBook(
+                                    title = "Book 1",
+                                    author = "Author 1",
+                                    coverImageUrl = "http://books.google.com/books/content?id=IDs63og2WpgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                ),
+                                MBook(
+                                    title = "Book 2",
+                                    author = "Author 2",
+                                    coverImageUrl = "http://books.google.com/books/content?id=geSWl0y5OTAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                ),
+                                MBook(
+                                    title = "Book 3",
+                                    author = "Author 3",
+                                    coverImageUrl = "http://books.google.com/books/content?id=c59gCUniP5gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                ),
+                                MBook(
+                                    title = "Book 4",
+                                    author = "Author 4",
+                                    coverImageUrl = "http://books.google.com/books/content?id=-DMRqbn1RPIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                )
+                            )
+                        ) { book ->
+                            BookCard(
+                                modifier = modifier,
+                                book = book,
+                                onCardClick = navigateToDetailsScreen
+                            )
+                        }
+                    }
                 }
             }
         }
