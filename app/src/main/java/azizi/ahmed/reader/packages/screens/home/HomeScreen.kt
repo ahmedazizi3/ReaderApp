@@ -19,22 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.components.home.FABContent
 import azizi.ahmed.reader.packages.components.home.BookCard
 import azizi.ahmed.reader.packages.model.MBook
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
     logout: () -> Unit = {},
     navigateToStatsScreen: () -> Unit = {},
-    navigateToDetailsScreen: (String) -> Unit = {}
+    navigateToDetailsScreen: (String) -> Unit = {},
+    navigateToSearchScreen: () -> Unit = {}
 ) {
-    val currentUserName = FirebaseAuth.getInstance().currentUser?.displayName ?: "User"
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -55,13 +52,14 @@ fun HomeScreen(
                     title = "Ahmed",
                     showProfile = true,
                     icon = Icons.AutoMirrored.Filled.ExitToApp,
-                    navController = navController, // Replace with actual NavController if needed
                     logout = logout, // Pass the logout function to the app bar
                     navigateToStatsScreen = navigateToStatsScreen // Pass the navigation function to the app bar
                 )
             },
             floatingActionButton = {
-                FABContent()
+                FABContent(
+                    onTab = navigateToSearchScreen
+                )
             }
         ) {
             Surface(
