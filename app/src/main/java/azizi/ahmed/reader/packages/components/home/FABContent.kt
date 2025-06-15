@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FABContent(
-    modifier: Modifier = Modifier,
     onTab: () -> Unit = { /* Default no-op */ } // Default no-op function for onTab
 ) {
     FloatingActionButton(
