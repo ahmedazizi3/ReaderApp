@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.components.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,7 +22,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +29,7 @@ fun ReaderAppBar(
     modifier: Modifier = Modifier,
     title: String = "",
     showProfile: Boolean = true,
-    navController: NavController,
+    rowWidth: Int = 160,
     icon: ImageVector = Icons.Default.Person,
     logout: () -> Unit = {},
     navigateToStatsScreen: () -> Unit = {}
@@ -45,23 +43,38 @@ fun ReaderAppBar(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
-                    modifier = modifier.width(160.dp), // Adjust width as needed
+                    modifier = modifier.width(rowWidth.dp), // Adjust width as needed
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     // Add profile icon or text here if needed
-                    Icon(
-                        imageVector  = Icons.Default.Person, // Replace with your profile icon painter
-                        contentDescription = "Profile Icon",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .clickable {
-                                navigateToStatsScreen()
-                            }, // Add any modifiers you need
-                        tint = Color(
-                            0xff12cbdf
+                    if (showProfile) {
+                        Icon(
+                            imageVector  = Icons.Default.Person, // Replace with your profile icon painter
+                            contentDescription = "Profile Icon",
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clickable {
+                                    navigateToStatsScreen()
+                                }, // Add any modifiers you need
+                            tint = Color(
+                                0xff12cbdf
+                            )
                         )
-                    )
+                    } else {
+                        Icon(
+                            imageVector  = Icons.AutoMirrored.Filled.ArrowBack, // Replace with your profile icon painter
+                            contentDescription = "Back Icon",
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clickable {
+                                    logout()
+                                }, // Add any modifiers you need
+                            tint = Color(
+                                0xff12cbdf
+                            )
+                        )
+                    }
 
                     Text(
                         text = title,
@@ -72,18 +85,20 @@ fun ReaderAppBar(
                         fontSize = 30.sp
                     )
                 }
-                Icon(
-                    modifier = modifier
-                        .size(35.dp)
-                        .clickable {
-                            logout()
-                        }, // Adjust size as needed
-                    imageVector = icon,
-                    contentDescription = "Profile Icon",
-                    tint = Color(
-                        0xff12cbdf
-                    ) // Set the icon color
-                )
+                if (showProfile) {
+                    Icon(
+                        modifier = modifier
+                            .size(35.dp)
+                            .clickable {
+                                logout()
+                            }, // Adjust size as needed
+                        imageVector = icon,
+                        contentDescription = "Profile Icon",
+                        tint = Color(
+                            0xff12cbdf
+                        ) // Set the icon color
+                    )
+                }
             }
         },
         actions = {
