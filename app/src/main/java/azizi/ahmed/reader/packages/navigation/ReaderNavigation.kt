@@ -12,6 +12,8 @@ import azizi.ahmed.reader.packages.screens.signUp.SignUpScreen
 import azizi.ahmed.reader.packages.screens.stats.StatsScreen
 import azizi.ahmed.reader.packages.screens.update.UpdateScreen
 import com.google.firebase.auth.FirebaseAuth
+import androidx.navigation.NavType // Import NavType
+import androidx.navigation.navArgument // Import navArgument
 
 @Composable
 fun ReaderNavigation() {
@@ -29,16 +31,20 @@ fun ReaderNavigation() {
 //        Define all the composable screens here
 
 //        DetailsScreen is typically used to show details of a specific item
-        composable(ReaderScreensHolder.DetailsScreen.route) {
+        // MODIFIED: Define the route to accept a bookId argument
+        composable(
+            route = "${ReaderScreensHolder.DetailsScreen.route}/{bookId}",
+            arguments = listOf(navArgument("bookId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val bookId = backStackEntry.arguments?.getString("bookId")
             DetailsScreen(
-                navController = navController
+                bookId = bookId
             )
         }
 
 //        HomeScreen is the main screen of the app
         composable(ReaderScreensHolder.HomeScreen.route) {
             HomeScreen(
-                navController = navController,
                 logout = {
                     FirebaseAuth.getInstance().signOut().run {
                         navController.navigate(ReaderScreensHolder.LoginScreen.route) {
@@ -51,6 +57,9 @@ fun ReaderNavigation() {
                 },
                 navigateToDetailsScreen = { bookId ->
                     navController.navigate("${ReaderScreensHolder.DetailsScreen.route}/$bookId")
+                },
+                navigateToSearchScreen = {
+                    navController.navigate(ReaderScreensHolder.SearchScreen.route)
                 }
             )
         }
@@ -69,7 +78,13 @@ fun ReaderNavigation() {
 
 //        SearchScreen is used to search for items
         composable(ReaderScreensHolder.SearchScreen.route) {
-            SearchScreen()
+            SearchScreen(
+                navigateToHomeScreen = {
+                    navController.navigate(ReaderScreensHolder.HomeScreen.route) {
+                        popUpTo(ReaderScreensHolder.SearchScreen.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
 //        SignUpScreen is used for user registration
