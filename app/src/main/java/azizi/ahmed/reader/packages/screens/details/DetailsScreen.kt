@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
-    bookId: String? = null, // Optional bookId parameter for details screen
     navController: NavController
 ) {
 
