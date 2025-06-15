@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +32,7 @@ fun ReaderAppBar(
     title: String = "",
     showProfile: Boolean = true,
     navController: NavController,
+    icon: ImageVector = Icons.Default.Person,
     logout: () -> Unit = {},
     navigateToStatsScreen: () -> Unit = {}
 ) {
@@ -43,7 +45,7 @@ fun ReaderAppBar(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
-                    modifier = modifier.width(140.dp), // Adjust width as needed
+                    modifier = modifier.width(160.dp), // Adjust width as needed
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -59,7 +61,6 @@ fun ReaderAppBar(
                         tint = Color(
                             0xff12cbdf
                         )
-
                     )
 
                     Text(
@@ -77,7 +78,7 @@ fun ReaderAppBar(
                         .clickable {
                             logout()
                         }, // Adjust size as needed
-                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                    imageVector = icon,
                     contentDescription = "Profile Icon",
                     tint = Color(
                         0xff12cbdf
