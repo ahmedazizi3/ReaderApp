@@ -30,7 +30,9 @@ fun ReaderNavigation() {
 
 //        DetailsScreen is typically used to show details of a specific item
         composable(ReaderScreensHolder.DetailsScreen.route) {
-            DetailsScreen()
+            DetailsScreen(
+                navController = navController
+            )
         }
 
 //        HomeScreen is the main screen of the app
@@ -46,6 +48,9 @@ fun ReaderNavigation() {
                 },
                 navigateToStatsScreen = {
                     navController.navigate(ReaderScreensHolder.StatsScreen.route)
+                },
+                navigateToDetailsScreen = { bookId ->
+                    navController.navigate("${ReaderScreensHolder.DetailsScreen.route}/$bookId")
                 }
             )
         }
@@ -81,7 +86,14 @@ fun ReaderNavigation() {
 
 //        StatsScreen is used to show statistics or analytics
         composable(ReaderScreensHolder.StatsScreen.route) {
-            StatsScreen()
+            StatsScreen(
+                navController = navController,
+                navigateToHomeScreen = {
+                    navController.navigate(ReaderScreensHolder.HomeScreen.route) {
+                        popUpTo(ReaderScreensHolder.StatsScreen.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
 //        UpdateScreen is used to update the app or user information
