@@ -1,4 +1,4 @@
-package azizi.ahmed.reader.packages.components.login
+package azizi.ahmed.reader.packages.components.home
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
