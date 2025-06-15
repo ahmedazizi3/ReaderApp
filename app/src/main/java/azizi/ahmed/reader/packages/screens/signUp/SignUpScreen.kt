@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import azizi.ahmed.reader.packages.components.common.ReaderTextField
-import azizi.ahmed.reader.packages.screens.login.LogInScreenViewModel
 
 @Composable
 fun SignUpScreen(
