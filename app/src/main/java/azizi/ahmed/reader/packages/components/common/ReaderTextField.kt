@@ -20,7 +20,8 @@ fun ReaderTextField(
     readerLabel: String,
     isSingleLine: Boolean,
     keyboardOptions: KeyboardOptions,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
 
     OutlinedTextField(
@@ -46,7 +47,6 @@ fun ReaderTextField(
             unfocusedLabelColor = Color.LightGray,
             focusedLabelColor = Color.LightGray,
             unfocusedTextColor = Color.LightGray,
-
         ),
         singleLine = isSingleLine,
         keyboardOptions = keyboardOptions,
