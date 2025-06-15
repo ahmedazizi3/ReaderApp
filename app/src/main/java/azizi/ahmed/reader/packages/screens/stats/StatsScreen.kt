@@ -45,10 +45,10 @@ fun StatsScreen(
             topBar = {
                 ReaderAppBar(
                     modifier = modifier,
-                    title = "Ahmed",
-                    showProfile = true,
+                    title = currentUserName,
+                    showProfile = false,
+                    rowWidth = 245,
                     icon = Icons.Default.Home,
-                    navController = navController, // Replace with actual NavController if needed
                     logout = navigateToHomeScreen
                 )
             }
