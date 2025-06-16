@@ -124,7 +124,7 @@ fun SearchScreen(
                             )
                         }
                     )
-
+                    
                     Spacer(modifier = modifier.height(16.dp))
 
                     LazyColumn(
