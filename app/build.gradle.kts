@@ -89,4 +89,9 @@ dependencies {
 
 //    Splash Screen
     implementation(libs.androidx.core.splashscreen)
+
+//    Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.converter.gson)
 }
