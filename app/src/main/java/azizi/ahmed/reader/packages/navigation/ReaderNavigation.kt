@@ -1,6 +1,7 @@
 package azizi.ahmed.reader.packages.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -14,6 +15,7 @@ import azizi.ahmed.reader.packages.screens.update.UpdateScreen
 import com.google.firebase.auth.FirebaseAuth
 import androidx.navigation.NavType // Import NavType
 import androidx.navigation.navArgument // Import navArgument
+import azizi.ahmed.reader.packages.screens.search.BookSearchViewModel
 
 @Composable
 fun ReaderNavigation() {
@@ -78,7 +80,9 @@ fun ReaderNavigation() {
 
 //        SearchScreen is used to search for items
         composable(ReaderScreensHolder.SearchScreen.route) {
+            val searchViewModel = hiltViewModel<BookSearchViewModel>()
             SearchScreen(
+                viewModel = searchViewModel,
                 navigateToHomeScreen = {
                     navController.navigate(ReaderScreensHolder.HomeScreen.route) {
                         popUpTo(ReaderScreensHolder.SearchScreen.route) { inclusive = true }
