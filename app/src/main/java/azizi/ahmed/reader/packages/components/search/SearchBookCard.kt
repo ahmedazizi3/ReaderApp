@@ -1,12 +1,14 @@
-package azizi.ahmed.reader.packages.components.common
+package azizi.ahmed.reader.packages.components.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,17 +24,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import azizi.ahmed.reader.packages.model.MBook
+import androidx.hilt.navigation.compose.hiltViewModel
+import azizi.ahmed.reader.packages.model.Item
+import azizi.ahmed.reader.packages.screens.search.BookSearchViewModel
 import coil.compose.AsyncImage
 
 @Composable
 fun SearchBookCard(
     modifier: Modifier = Modifier,
-    book: MBook = MBook()
+    book: Item,
+    viewModel: BookSearchViewModel = hiltViewModel()
 ) {
     Column(
         modifier = modifier
-            .height(140.dp)
             .width(350.dp)
             .background(Color.White)
     ) {
@@ -40,7 +44,7 @@ fun SearchBookCard(
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .clickable {  },
+                .clickable { },
             shape = RoundedCornerShape(
                 topStart = 16.dp,
                 topEnd = 16.dp,
@@ -54,7 +58,8 @@ fun SearchBookCard(
             // Content of the card goes here
             Row(
                 modifier = modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
                     .background(Color.White),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
@@ -67,46 +72,44 @@ fun SearchBookCard(
                         topStart = 16.dp,
                         bottomStart = 16.dp,
                     ),
-                    shadowElevation = 4.dp,
                     color = Color.LightGray
                 ) {
                     AsyncImage(
-                        model = book.coverImageUrl, // Replace with actual image URL
+                        model = book.volumeInfo.imageLinks.thumbnail, // Replace with actual image URL
                         contentDescription = "Book Cover",
                         modifier = modifier
-                            .fillMaxHeight()
-                            .width(130.dp)
+                            .fillMaxSize()
                             .background(Color.White)
                     )
                 }
                 Column(
                     modifier = modifier
-                        .fillMaxSize()
-                        .background(Color.White),
+                        .padding(8.dp)
+                        .weight(1f),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = book.title,
+                        text = book.volumeInfo.title,
                         modifier = modifier.padding(8.dp),
                         color = Color.Black,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = book.author,
+                        text = "By: ${book.volumeInfo.authors}",
                         modifier = modifier.padding(start = 8.dp),
                         color = Color.Black,
                         fontSize = 16.sp
                     )
                     Text(
-                        text = book.publicationDate,
+                        text = "Date: ${book.volumeInfo.publishedDate}",
                         modifier = modifier.padding(start = 8.dp),
                         color = Color.Black,
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "[Computers]",
+                        text = "Category: ${book.volumeInfo.categories}",
                         modifier = modifier.padding(start = 8.dp),
                         color = Color.Black,
                         fontSize = 16.sp
