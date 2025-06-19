@@ -2,6 +2,7 @@ package azizi.ahmed.reader.packages.screens.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,11 +28,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.components.search.SearchBookCard
 import azizi.ahmed.reader.packages.components.search.InputField
+import azizi.ahmed.reader.packages.model.Item
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: BookSearchViewModel = hiltViewModel(),
+    navigateToDetailsScreen: (String) -> Unit = {},
     navigateToHomeScreen: () -> Unit = {}
 ) {
     val searchQueryState = remember {
@@ -107,7 +110,17 @@ fun SearchScreen(
                     Spacer(modifier = modifier.height(16.dp))
 
                     if (viewModel.isLoading) {
-                        CircularProgressIndicator()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color(
+                                    0xff12cbdf
+                                )
+                            )
+                        }
                     } else {
                         LazyColumn(
                             modifier = modifier
@@ -120,7 +133,12 @@ fun SearchScreen(
 
                                 SearchBookCard(
                                     modifier = modifier,
-                                    book = book
+                                    book = book,
+                                    navigateToDetailsScreen = {
+                                        navigateToDetailsScreen(
+                                            book.id
+                                        )
+                                    }
                                 )
                             }
                         }
