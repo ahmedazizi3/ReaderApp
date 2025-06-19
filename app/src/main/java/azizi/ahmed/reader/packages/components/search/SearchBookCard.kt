@@ -1,5 +1,6 @@
 package azizi.ahmed.reader.packages.components.search
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,17 +25,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import azizi.ahmed.reader.packages.model.Item
-import azizi.ahmed.reader.packages.screens.search.BookSearchViewModel
 import coil.compose.AsyncImage
 
 @Composable
 fun SearchBookCard(
     modifier: Modifier = Modifier,
     book: Item,
-    viewModel: BookSearchViewModel = hiltViewModel()
+    navigateToDetailsScreen: () -> Unit = {},
 ) {
+
+
     Column(
         modifier = modifier
             .width(350.dp)
@@ -44,7 +45,9 @@ fun SearchBookCard(
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .clickable { },
+                .clickable {
+                    navigateToDetailsScreen()
+                },
             shape = RoundedCornerShape(
                 topStart = 16.dp,
                 topEnd = 16.dp,
@@ -74,9 +77,10 @@ fun SearchBookCard(
                     ),
                     color = Color.LightGray
                 ) {
+                    Log.d("ImageDebug", "URL: ${book.volumeInfo.imageLinks.thumbnail}")
                     AsyncImage(
-                        model = book.volumeInfo.imageLinks.thumbnail, // Replace with actual image URL
-                        contentDescription = "Book Cover",
+                        model = book.volumeInfo.imageLinks.thumbnail,
+                                contentDescription = "Book Cover",
                         modifier = modifier
                             .fillMaxSize()
                             .background(Color.White)
