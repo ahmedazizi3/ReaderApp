@@ -34,14 +34,25 @@ fun ReaderNavigation() {
 
 //        DetailsScreen is typically used to show details of a specific item
         // MODIFIED: Define the route to accept a bookId argument
+        val detailsRoute = ReaderScreensHolder.DetailsScreen.route
         composable(
-            route = "${ReaderScreensHolder.DetailsScreen.route}/{bookId}",
-            arguments = listOf(navArgument("bookId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val bookId = backStackEntry.arguments?.getString("bookId")
-            DetailsScreen(
-                bookId = bookId
+            route = "$detailsRoute/{bookId}",
+            arguments = listOf(
+                navArgument("bookId") {
+                    type = NavType.StringType
+                }
             )
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("bookId").let { bookId ->
+                DetailsScreen(
+                    bookId = bookId.toString(),
+                    navigateToSearchScreen = {
+                        navController.navigate(ReaderScreensHolder.SearchScreen.route) {
+                            popUpTo(ReaderScreensHolder.DetailsScreen.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
 
 //        HomeScreen is the main screen of the app
@@ -87,6 +98,9 @@ fun ReaderNavigation() {
                     navController.navigate(ReaderScreensHolder.HomeScreen.route) {
                         popUpTo(ReaderScreensHolder.SearchScreen.route) { inclusive = true }
                     }
+                },
+                navigateToDetailsScreen = { bookId ->
+                    navController.navigate(ReaderScreensHolder.DetailsScreen.route + "/$bookId")
                 }
             )
         }
