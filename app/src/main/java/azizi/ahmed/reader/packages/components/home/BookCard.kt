@@ -35,17 +35,15 @@ import coil.compose.AsyncImage
 fun BookCard(
     modifier: Modifier = Modifier,
     book: MBook = MBook(
-        bookID = "",
+        id = "",
         title = "",
         author = "",
         notes = "",
         description = "",
-        coverImageUrl = "",
-        genre = "",
-        publicationDate = "",
-        isFavorite = false,
+        photoUrl = "",
+        publishedDate = "",
         rating = 0.0,
-        pageCount = 0
+        pageCount = 0.toString()
     ),
     onCardClick: (String) -> Unit = {}
 ) {
@@ -69,7 +67,7 @@ fun BookCard(
             modifier = modifier
                 .fillMaxSize()
                 .clickable {
-                    onCardClick.invoke(book.title)
+                    book.title?.let { onCardClick.invoke(it) }
                 },
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 4.dp
@@ -89,7 +87,7 @@ fun BookCard(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     AsyncImage(
-                        model = book.coverImageUrl, // Replace with book.coverImageUrl
+                        model = book.photoUrl, // Replace with book.coverImageUrl
                         contentDescription = book.title,
                         modifier = modifier
                             .height(150.dp)
@@ -120,18 +118,20 @@ fun BookCard(
                     }
                 }
 
-                Text(
-                    text = book.title,
-                    modifier = modifier
-                        .padding(
-                        start = 10.dp,
-                        top = 10.dp
-                        )
-                        .align(Alignment.Start),
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
+                book.title?.let {
+                    Text(
+                        text = it,
+                        modifier = modifier
+                            .padding(
+                                start = 10.dp,
+                                top = 10.dp
+                            )
+                            .align(Alignment.Start),
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
                 Text(
                     text = "by ${book.author}",
                     modifier = modifier
