@@ -96,9 +96,8 @@ fun HomeScreen(
                         book = MBook(
                             title = "The Art of War",
                             author = "Ahmed Azizi",
-                            coverImageUrl = "http://books.google.com/books/content?id=mP4ADQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-                        ),
-                        onCardClick = navigateToDetailsScreen
+                            photoUrl = "http://books.google.com/books/content?id=mP4ADQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                        )
                     )
 
                     Text(
@@ -125,22 +124,22 @@ fun HomeScreen(
                                 MBook(
                                     title = "Book 1",
                                     author = "Author 1",
-                                    coverImageUrl = "http://books.google.com/books/content?id=IDs63og2WpgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                    photoUrl = "http://books.google.com/books/content?id=IDs63og2WpgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
                                 ),
                                 MBook(
                                     title = "Book 2",
                                     author = "Author 2",
-                                    coverImageUrl = "http://books.google.com/books/content?id=geSWl0y5OTAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                    photoUrl = "http://books.google.com/books/content?id=geSWl0y5OTAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
                                 ),
                                 MBook(
                                     title = "Book 3",
                                     author = "Author 3",
-                                    coverImageUrl = "http://books.google.com/books/content?id=c59gCUniP5gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                    photoUrl = "http://books.google.com/books/content?id=c59gCUniP5gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
                                 ),
                                 MBook(
                                     title = "Book 4",
                                     author = "Author 4",
-                                    coverImageUrl = "http://books.google.com/books/content?id=-DMRqbn1RPIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                                    photoUrl = "http://books.google.com/books/content?id=-DMRqbn1RPIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
                                 )
                             )
                         ) { book ->
