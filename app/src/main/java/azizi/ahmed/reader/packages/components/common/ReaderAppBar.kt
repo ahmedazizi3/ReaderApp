@@ -30,7 +30,9 @@ fun ReaderAppBar(
     title: String = "",
     showProfile: Boolean = true,
     rowWidth: Int = 160,
+    isDetailsScreen: Boolean = false,
     icon: ImageVector = Icons.Default.Person,
+    save: () -> Unit = {},
     logout: () -> Unit = {},
     navigateToStatsScreen: () -> Unit = {}
 ) {
@@ -91,6 +93,21 @@ fun ReaderAppBar(
                             .size(35.dp)
                             .clickable {
                                 logout()
+                            }, // Adjust size as needed
+                        imageVector = icon,
+                        contentDescription = "Profile Icon",
+                        tint = Color(
+                            0xff12cbdf
+                        ) // Set the icon color
+                    )
+                }
+
+                if (isDetailsScreen) {
+                    Icon(
+                        modifier = modifier
+                            .size(35.dp)
+                            .clickable {
+                                save()
                             }, // Adjust size as needed
                         imageVector = icon,
                         contentDescription = "Profile Icon",
