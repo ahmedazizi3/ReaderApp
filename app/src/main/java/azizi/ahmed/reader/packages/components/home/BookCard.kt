@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import azizi.ahmed.reader.packages.model.MBook
@@ -34,18 +35,8 @@ import coil.compose.AsyncImage
 @Composable
 fun BookCard(
     modifier: Modifier = Modifier,
-    book: MBook = MBook(
-        id = "",
-        title = "",
-        author = "",
-        notes = "",
-        description = "",
-        photoUrl = "",
-        publishedDate = "",
-        rating = 0.0,
-        pageCount = 0.toString()
-    ),
-    onCardClick: (String) -> Unit = {}
+    book: MBook,
+    navigateToUpdateScreen: (String) -> Unit = {}
 ) {
 
     val context = LocalContext.current
@@ -67,7 +58,7 @@ fun BookCard(
             modifier = modifier
                 .fillMaxSize()
                 .clickable {
-                    book.title?.let { onCardClick.invoke(it) }
+                    book.title?.let { navigateToUpdateScreen.invoke(it) }
                 },
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 4.dp
@@ -87,7 +78,7 @@ fun BookCard(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     AsyncImage(
-                        model = book.photoUrl, // Replace with book.coverImageUrl
+                        model = book.photoUrl.toString(), // Replace with book.coverImageUrl
                         contentDescription = book.title,
                         modifier = modifier
                             .height(150.dp)
@@ -129,7 +120,9 @@ fun BookCard(
                             .align(Alignment.Start),
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 Text(
@@ -139,7 +132,9 @@ fun BookCard(
                             start = 10.dp
                         )
                         .align(Alignment.Start),
-                    color = Color.Black
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
 
