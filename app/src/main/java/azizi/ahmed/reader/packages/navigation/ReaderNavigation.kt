@@ -15,7 +15,8 @@ import azizi.ahmed.reader.packages.screens.update.UpdateScreen
 import com.google.firebase.auth.FirebaseAuth
 import androidx.navigation.NavType // Import NavType
 import androidx.navigation.navArgument // Import navArgument
-import azizi.ahmed.reader.packages.screens.search.BookSearchViewModel
+import azizi.ahmed.reader.packages.screens.home.HomeScreenViewModel
+import azizi.ahmed.reader.packages.screens.search.SearchScreenViewModel
 
 @Composable
 fun ReaderNavigation() {
@@ -46,10 +47,8 @@ fun ReaderNavigation() {
             backStackEntry.arguments?.getString("bookId").let { bookId ->
                 DetailsScreen(
                     bookId = bookId.toString(),
-                    navigateToSearchScreen = {
-                        navController.navigate(ReaderScreensHolder.SearchScreen.route) {
-                            popUpTo(ReaderScreensHolder.DetailsScreen.route) { inclusive = true }
-                        }
+                    navigateToSearchOrHomeScreen = {
+                        navController.popBackStack()
                     }
                 )
             }
@@ -57,7 +56,9 @@ fun ReaderNavigation() {
 
 //        HomeScreen is the main screen of the app
         composable(ReaderScreensHolder.HomeScreen.route) {
+            val homeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
             HomeScreen(
+                homeScreenViewModel = homeScreenViewModel,
                 logout = {
                     FirebaseAuth.getInstance().signOut().run {
                         navController.navigate(ReaderScreensHolder.LoginScreen.route) {
@@ -68,8 +69,8 @@ fun ReaderNavigation() {
                 navigateToStatsScreen = {
                     navController.navigate(ReaderScreensHolder.StatsScreen.route)
                 },
-                navigateToDetailsScreen = { bookId ->
-                    navController.navigate("${ReaderScreensHolder.DetailsScreen.route}/$bookId")
+                navigateToUpdateScreen = {
+                    navController.navigate(ReaderScreensHolder.UpdateScreen.route + "/$it")
                 },
                 navigateToSearchScreen = {
                     navController.navigate(ReaderScreensHolder.SearchScreen.route)
@@ -91,9 +92,9 @@ fun ReaderNavigation() {
 
 //        SearchScreen is used to search for items
         composable(ReaderScreensHolder.SearchScreen.route) {
-            val searchViewModel = hiltViewModel<BookSearchViewModel>()
+            val searchViewModel = hiltViewModel<SearchScreenViewModel>()
             SearchScreen(
-                viewModel = searchViewModel,
+                searchScreenViewModel = searchViewModel,
                 navigateToHomeScreen = {
                     navController.navigate(ReaderScreensHolder.HomeScreen.route) {
                         popUpTo(ReaderScreensHolder.SearchScreen.route) { inclusive = true }
@@ -130,8 +131,24 @@ fun ReaderNavigation() {
         }
 
 //        UpdateScreen is used to update the app or user information
-        composable(ReaderScreensHolder.UpdateScreen.route) {
-            UpdateScreen()
+        val updateRoute = ReaderScreensHolder.UpdateScreen.route
+        composable(
+            route = "$updateRoute/{bookItemId}",
+            arguments = listOf(
+                navArgument("bookItemId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { navBackStackEntry ->
+            navBackStackEntry.arguments?.getString("bookItemId").let {
+                UpdateScreen(
+                    navController = navController,
+                    bookItemId = it.toString(),
+                    navigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }
