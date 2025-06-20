@@ -36,7 +36,7 @@ import azizi.ahmed.reader.packages.components.common.ReaderTextField
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    viewModel: SignUpScreenViewModel = viewModel(),
+    signUpScreenViewModel: SignUpScreenViewModel = viewModel(),
     navigateToHomeScreen: () -> Unit = {},
     navigateToLoginScreen: () -> Unit = {}
 ) {
@@ -115,7 +115,7 @@ fun SignUpScreen(
                     && password.value == passwordConfirmation.value,
             onClick = {
                 keyboardController?.hide()
-                viewModel.createUserWithEmailAndPassword(
+                signUpScreenViewModel.createUserWithEmailAndPassword(
                     email = email.value,
                     password = password.value,
                     navigateToHomeScreen = {
