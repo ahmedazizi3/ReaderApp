@@ -1,7 +1,9 @@
 package azizi.ahmed.reader.packages.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,19 +22,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.components.home.FABContent
 import azizi.ahmed.reader.packages.components.home.BookCard
 import azizi.ahmed.reader.packages.model.MBook
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     logout: () -> Unit = {},
     navigateToStatsScreen: () -> Unit = {},
-    navigateToDetailsScreen: (String) -> Unit = {},
-    navigateToSearchScreen: () -> Unit = {}
+    navigateToSearchScreen: () -> Unit = {},
+    navigateToUpdateScreen: () -> Unit = {}
 ) {
+
+    var listOfBooks = emptyList<MBook>()
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    if (!homeScreenViewModel.data.value.data.isNullOrEmpty()) {
+        listOfBooks = homeScreenViewModel.data.value.data!!.toList().filter { mBook ->
+            mBook.userId == currentUser?.uid.toString()
+        }
+        Log.d("Books", "HomeScreen: ${listOfBooks.toString()}")
+    }
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -80,74 +99,104 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    Text(
-                        text = "Currently reading...",
+                    Column(
                         modifier = modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Start)
-                            .padding(bottom = 16.dp),
-                        fontSize = 25.sp,
-                        color = Color.Black
-                    )
-
-                    BookCard(
-                        modifier = modifier
-                            .align(Alignment.Start),
-                        book = MBook(
-                            title = "The Art of War",
-                            author = "Ahmed Azizi",
-                            photoUrl = "http://books.google.com/books/content?id=mP4ADQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-                        )
-                    )
-
-                    Text(
-                        text = "Reading List: ",
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Start)
-                            .padding(
-                                top = 20.dp,
-                                bottom = 16.dp
-                            ),
-                        fontSize = 25.sp,
-                        color = Color.Black
-                    )
-
-                    LazyRow(
-                        modifier = modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .weight(0.5f)
                     ) {
-                        items(
-                            listOf(
-                                MBook(
-                                    title = "Book 1",
-                                    author = "Author 1",
-                                    photoUrl = "http://books.google.com/books/content?id=IDs63og2WpgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-                                ),
-                                MBook(
-                                    title = "Book 2",
-                                    author = "Author 2",
-                                    photoUrl = "http://books.google.com/books/content?id=geSWl0y5OTAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-                                ),
-                                MBook(
-                                    title = "Book 3",
-                                    author = "Author 3",
-                                    photoUrl = "http://books.google.com/books/content?id=c59gCUniP5gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-                                ),
-                                MBook(
-                                    title = "Book 4",
-                                    author = "Author 4",
-                                    photoUrl = "http://books.google.com/books/content?id=-DMRqbn1RPIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+                        Text(
+                            text = "Currently reading...",
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Start)
+                                .padding(bottom = 16.dp),
+                            fontSize = 25.sp,
+                            color = Color.Black
+                        )
+
+                        if (homeScreenViewModel.data.value.loading == true) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(0.5f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(
+                                        0xff12cbdf
+                                    )
                                 )
-                            )
-                        ) { book ->
-                            BookCard(
-                                modifier = modifier,
-                                book = book,
-                                onCardClick = navigateToDetailsScreen
-                            )
+                            }
+                        } else {
+                            LazyRow(
+                                modifier = modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                items(
+                                    items = listOfBooks
+                                ) { book ->
+                                    BookCard(
+                                        modifier = modifier,
+                                        book = book,
+                                        navigateToUpdateScreen = {
+                                            navigateToUpdateScreen.invoke()
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = modifier
+                            .weight(0.5f)
+                    ) {
+                        Text(
+                            text = "Reading List: ",
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Start)
+                                .padding(
+                                    top = 20.dp,
+                                    bottom = 16.dp
+                                ),
+                            fontSize = 25.sp,
+                            color = Color.Black
+                        )
+
+                        if (homeScreenViewModel.data.value.loading == true) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(0.5f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(
+                                        0xff12cbdf
+                                    )
+                                )
+                            }
+                        } else {
+                            LazyRow(
+                                modifier = modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                items(
+                                    items = listOfBooks
+                                ) { book ->
+                                    BookCard(
+                                        modifier = modifier,
+                                        book = book,
+                                        navigateToUpdateScreen = {
+                                            navigateToUpdateScreen.invoke()
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
