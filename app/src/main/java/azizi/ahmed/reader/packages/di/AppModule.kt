@@ -2,7 +2,9 @@ package azizi.ahmed.reader.packages.di
 
 import azizi.ahmed.reader.packages.network.BooksAPI
 import azizi.ahmed.reader.packages.repository.BooksRepository
+import azizi.ahmed.reader.packages.repository.FirestoreRepository
 import azizi.ahmed.reader.packages.utils.Constants.BASE_URL
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +16,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideFirestoreBooksRepository(booksAPI: BooksAPI) = FirestoreRepository(
+        queryBooks = FirebaseFirestore.getInstance().collection("books")
+    )
 
     @Singleton
     @Provides
