@@ -1,13 +1,11 @@
 package azizi.ahmed.reader.packages.screens.search
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import azizi.ahmed.reader.packages.data.DataOrException
 import azizi.ahmed.reader.packages.data.Resource
 import azizi.ahmed.reader.packages.model.Item
 import azizi.ahmed.reader.packages.repository.BooksRepository
@@ -18,8 +16,8 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class BookSearchViewModel @Inject constructor(
-    private val repository: BooksRepository
+class SearchScreenViewModel @Inject constructor(
+    private val booksRepository: BooksRepository
 ): ViewModel() {
     var listOfBooks: List<Item> by mutableStateOf(listOf())
     var isLoading: Boolean by mutableStateOf(true)
@@ -33,7 +31,7 @@ class BookSearchViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             if (query.isEmpty()) return@launch
             try {
-                when (val response = repository.getBooks(query)) {
+                when (val response = booksRepository.getBooks(query)) {
                     is Resource.Success -> {
                         listOfBooks = response.data!!
                         if (listOfBooks.isNotEmpty()) isLoading = false

@@ -28,12 +28,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.components.search.SearchBookCard
 import azizi.ahmed.reader.packages.components.search.InputField
-import azizi.ahmed.reader.packages.model.Item
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    viewModel: BookSearchViewModel = hiltViewModel(),
+    searchScreenViewModel: SearchScreenViewModel = hiltViewModel(),
     navigateToDetailsScreen: (String) -> Unit = {},
     navigateToHomeScreen: () -> Unit = {}
 ) {
@@ -47,7 +46,7 @@ fun SearchScreen(
         searchQueryState.value.trim().isNotEmpty()
     }
 
-    val bookList = viewModel.listOfBooks
+    val bookList = searchScreenViewModel.listOfBooks
 
 
 
@@ -101,7 +100,7 @@ fun SearchScreen(
                         enabled = true,
                         onAction = KeyboardActions {
                             if (!valid) return@KeyboardActions
-                            viewModel.searchBooks(searchQueryState.value.trim())
+                            searchScreenViewModel.searchBooks(searchQueryState.value.trim())
                             searchQueryState.value = ""
                             keyboardController?.hide()
                         }
@@ -109,7 +108,7 @@ fun SearchScreen(
                     
                     Spacer(modifier = modifier.height(16.dp))
 
-                    if (viewModel.isLoading) {
+                    if (searchScreenViewModel.isLoading) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize(),
