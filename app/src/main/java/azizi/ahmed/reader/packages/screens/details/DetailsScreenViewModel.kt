@@ -10,10 +10,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsScreenViewModel @Inject constructor(
-    private val repository: BooksRepository
+    private val booksRepository: BooksRepository
 ) : ViewModel() {
     suspend fun getBookInfo(bookId: String): Resource<Item> {
-        return repository.getBookInfo(bookId)
+        return booksRepository.getBookInfo(bookId)
     }
 
 

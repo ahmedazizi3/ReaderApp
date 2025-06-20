@@ -51,8 +51,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun DetailsScreen(
     modifier: Modifier = Modifier,
     bookId: String,
-    viewModel: DetailsScreenViewModel = hiltViewModel(),
-    navigateToSearchScreen: () -> Unit = {}
+    detailsScreenViewModel: DetailsScreenViewModel = hiltViewModel(),
+    navigateToSearchOrHomeScreen: () -> Unit = {}
 ) {
 
     fun parseHtml(htmlString: String?): String {
@@ -61,7 +61,7 @@ fun DetailsScreen(
     val bookInfo = produceState<Resource<Item>>(
         initialValue = Resource.Loading()
     ) {
-        value = viewModel.getBookInfo(bookId)
+        value = detailsScreenViewModel.getBookInfo(bookId)
     }.value
 
     val icon = remember { mutableStateOf(Icons.Default.FavoriteBorder) }
@@ -116,7 +116,7 @@ fun DetailsScreen(
 
                         }
                     },
-                    logout = navigateToSearchScreen
+                    logout = navigateToSearchOrHomeScreen
                 )
             }
         ) {
