@@ -5,11 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
@@ -17,8 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
+import azizi.ahmed.reader.packages.components.update.TakingNoteArea
+import azizi.ahmed.reader.packages.components.update.UpdateBookCard
 import azizi.ahmed.reader.packages.data.DataOrException
 import azizi.ahmed.reader.packages.model.MBook
 import azizi.ahmed.reader.packages.screens.home.HomeScreenViewModel
@@ -27,11 +29,10 @@ import azizi.ahmed.reader.packages.screens.home.HomeScreenViewModel
 fun UpdateScreen(
     modifier: Modifier = Modifier,
     bookItemId: String,
-    navController: NavHostController,
     updateScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    navigateToHomeScreenWithRecomposition: () -> Unit = {},
     navigateBack: () -> Unit = {}
 ) {
-
     val bookInfo = produceState<DataOrException<List<MBook>, Boolean, Exception>>(
         initialValue = DataOrException(
             loading = true,
@@ -74,7 +75,7 @@ fun UpdateScreen(
                     .background(color = Color.White)
                     .padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
             ) {
                 Log.d("UpdateScreen", "UpdateScreen: ${updateScreenViewModel.data.value.data.toString()}")
                 if (bookInfo.loading == true) {
@@ -92,14 +93,27 @@ fun UpdateScreen(
                     }
                     bookInfo.loading = false
                 } else {
-                    Log.d("UpdateScreen", "UpdateScreen: ${bookInfo.data.toString()}")
-                    Text(
-                        text = updateScreenViewModel.data.value.data?.get(0)?.title.toString(),
-                        color = Color.Black
+                    Spacer(modifier = modifier.height(26.dp))
+                    if (bookInfo.data != null) {
+                        UpdateBookCard(
+                            bookInfo = updateScreenViewModel.data.value,
+                            bookItemId = bookItemId
+                        )
+                    }
+
+                    Spacer(modifier = modifier.height(26.dp))
+
+                    TakingNoteArea(
+                        book = updateScreenViewModel.data.value.data?.first { mBook ->
+                            mBook.googleBookId == bookItemId
+                        }!!,
+                        bookItemId = bookItemId,
+                        navigateToHomeScreenWithRecomposition = {
+                            navigateToHomeScreenWithRecomposition.invoke()
+                        }
                     )
                 }
             }
         }
     }
-
 }
