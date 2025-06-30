@@ -23,10 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
-import azizi.ahmed.reader.packages.components.home.FABContent
 import azizi.ahmed.reader.packages.components.home.BookCard
+import azizi.ahmed.reader.packages.components.home.FABContent
 import azizi.ahmed.reader.packages.model.MBook
 import com.google.firebase.auth.FirebaseAuth
 
@@ -37,7 +36,7 @@ fun HomeScreen(
     logout: () -> Unit = {},
     navigateToStatsScreen: () -> Unit = {},
     navigateToSearchScreen: () -> Unit = {},
-    navigateToUpdateScreen: () -> Unit = {}
+    navigateToUpdateScreen: (String) -> Unit = {}
 ) {
 
     var listOfBooks = emptyList<MBook>()
@@ -47,7 +46,15 @@ fun HomeScreen(
         listOfBooks = homeScreenViewModel.data.value.data!!.toList().filter { mBook ->
             mBook.userId == currentUser?.uid.toString()
         }
-        Log.d("Books", "HomeScreen: ${listOfBooks.toString()}")
+        Log.d("Books", "HomeScreen: $listOfBooks.")
+    }
+
+    val addedBooks = listOfBooks.filter { mBook ->
+        mBook.startedReading == null && mBook.finishedReading == null
+    }
+
+    val readingNow = listOfBooks.filter { mBook ->
+        mBook.startedReading != null && mBook.finishedReading == null
     }
 
 
@@ -127,22 +134,38 @@ fun HomeScreen(
                                 )
                             }
                         } else {
-                            LazyRow(
-                                modifier = modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                items(
-                                    items = listOfBooks
-                                ) { book ->
-                                    BookCard(
-                                        modifier = modifier,
-                                        book = book,
-                                        navigateToUpdateScreen = {
-                                            navigateToUpdateScreen.invoke()
-                                        }
+                            if (readingNow.isEmpty()) {
+                                Box(
+                                    modifier = modifier
+                                        .fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "No books currently reading",
+                                        fontSize = 28.sp,
+                                        color = Color(0xff12cbdf)
                                     )
+                                }
+                            } else {
+                                LazyRow(
+                                    modifier = modifier
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    items(
+                                        items = readingNow
+                                    ) { book ->
+                                        BookCard(
+                                            modifier = modifier,
+                                            book = book,
+                                            navigateToUpdateScreen = {
+                                                navigateToUpdateScreen.invoke(
+                                                    book.googleBookId.toString()
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -179,22 +202,38 @@ fun HomeScreen(
                                 )
                             }
                         } else {
-                            LazyRow(
-                                modifier = modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                items(
-                                    items = listOfBooks
-                                ) { book ->
-                                    BookCard(
-                                        modifier = modifier,
-                                        book = book,
-                                        navigateToUpdateScreen = {
-                                            navigateToUpdateScreen.invoke()
-                                        }
+                            if (addedBooks.isEmpty()) {
+                                Box(
+                                    modifier = modifier
+                                        .fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "You reading list is empty",
+                                        fontSize = 28.sp,
+                                        color = Color(0xff12cbdf)
                                     )
+                                }
+                            } else {
+                                LazyRow(
+                                    modifier = modifier
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    items(
+                                        items = addedBooks
+                                    ) { book ->
+                                        BookCard(
+                                            modifier = modifier,
+                                            book = book,
+                                            navigateToUpdateScreen = {
+                                                navigateToUpdateScreen(
+                                                    book.googleBookId.toString()
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
