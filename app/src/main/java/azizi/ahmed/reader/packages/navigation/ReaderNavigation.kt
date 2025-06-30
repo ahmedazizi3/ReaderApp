@@ -55,6 +55,7 @@ fun ReaderNavigation() {
         }
 
 //        HomeScreen is the main screen of the app
+
         composable(ReaderScreensHolder.HomeScreen.route) {
             val homeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
             HomeScreen(
@@ -120,8 +121,9 @@ fun ReaderNavigation() {
 
 //        StatsScreen is used to show statistics or analytics
         composable(ReaderScreensHolder.StatsScreen.route) {
+            val statsScreenViewModel = hiltViewModel<HomeScreenViewModel>()
             StatsScreen(
-                navController = navController,
+                statsScreenViewModel = statsScreenViewModel,
                 navigateToHomeScreen = {
                     navController.navigate(ReaderScreensHolder.HomeScreen.route) {
                         popUpTo(ReaderScreensHolder.StatsScreen.route) { inclusive = true }
@@ -142,10 +144,12 @@ fun ReaderNavigation() {
         ) { navBackStackEntry ->
             navBackStackEntry.arguments?.getString("bookItemId").let {
                 UpdateScreen(
-                    navController = navController,
                     bookItemId = it.toString(),
                     navigateBack = {
                         navController.popBackStack()
+                    },
+                    navigateToHomeScreenWithRecomposition = {
+                        navController.navigate(ReaderScreensHolder.HomeScreen.route)
                     }
                 )
             }
