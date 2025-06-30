@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 fun ReaderTextField(
     modifier: Modifier = Modifier,
     textFieldValue: MutableState<String>,
-    readerLabel: String,
-    isSingleLine: Boolean,
+    readerLabel: String = "",
+    isSingleLine: Boolean = false,
     keyboardOptions: KeyboardOptions,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
