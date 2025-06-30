@@ -20,6 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -104,7 +106,7 @@ fun BookCard(
                         BookRating(
                             modifier = modifier
                                 .background(Color.White),
-                            rating = 3.7
+                            rating = book.rating!!
                         )
                     }
                 }
@@ -161,8 +163,12 @@ fun BookCard(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
+                                val isStartedReading = remember {
+                                    mutableStateOf(false)
+                                }
+                                isStartedReading.value = book.startedReading != null
                                 Text(
-                                    text = "Reading",
+                                    text = if (isStartedReading.value) "Reading" else "Not Yet",
                                     color = Color.White,
                                     fontSize = 20.sp
                                 )
