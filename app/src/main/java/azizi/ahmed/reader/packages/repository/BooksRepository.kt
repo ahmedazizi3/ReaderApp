@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.repository
 
-import azizi.ahmed.reader.packages.data.DataOrException
 import azizi.ahmed.reader.packages.data.Resource
 import azizi.ahmed.reader.packages.model.Item
 import azizi.ahmed.reader.packages.network.BooksAPI
