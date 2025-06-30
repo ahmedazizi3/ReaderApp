@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun InputField(
-    modifier: Modifier = Modifier,
     valueState: MutableState<String>,
     labelId: String,
     enabled: Boolean,
