@@ -19,7 +19,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideFirestoreBooksRepository(booksAPI: BooksAPI) = FirestoreRepository(
+    fun provideFirestoreBooksRepository() = FirestoreRepository(
         queryBooks = FirebaseFirestore.getInstance().collection("books")
     )
 
