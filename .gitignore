@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/google-services.json
+*.jks
+*.keystore
+*.p12
+*.pfx
+.kotlin/
+/.idea/appInsightsSettings.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/material_theme_project_new.xml
+/.idea/firebender/
+/.idea/markdown.xml
