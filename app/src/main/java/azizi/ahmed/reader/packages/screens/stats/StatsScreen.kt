@@ -27,10 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.components.stats.BookRowStats
-import azizi.ahmed.reader.packages.model.MBook
 import azizi.ahmed.reader.packages.screens.home.HomeScreenViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -41,8 +40,7 @@ fun StatsScreen(
     navigateToHomeScreen: () -> Unit = {},
 ) {
     val currentUserName = FirebaseAuth.getInstance().currentUser?.email?.substringBefore('@') ?: "User"
-    var books: List<MBook>
-    val currentUser = FirebaseAuth.getInstance().currentUser
+    val books = statsScreenViewModel.data.value.data.orEmpty()
 
 
     Column(
@@ -78,13 +76,6 @@ fun StatsScreen(
                         color = Color.White
                     )
             ) {
-                books = if (!statsScreenViewModel.data.value.data.isNullOrEmpty()) {
-                    statsScreenViewModel.data.value.data!!.filter { mBook ->
-                        (mBook.userId == currentUser?.uid)
-                    }
-                } else {
-                    emptyList()
-                }
                 Column(
                     modifier = modifier
                         .fillMaxSize()
@@ -107,12 +98,8 @@ fun StatsScreen(
                             containerColor = Color.White
                         )
                     ) {
-                        val readBookList: List<MBook> = if (!statsScreenViewModel.data.value.data.isNullOrEmpty()) {
-                            books.filter { mBook ->
-                                (mBook.userId == currentUser?.uid) && (mBook.finishedReading != null)
-                            }
-                        } else {
-                            emptyList()
+                        val readBookList = books.filter { mBook ->
+                            mBook.finishedReading != null
                         }
 
                         val readingBooks = books.filter { mBook ->
@@ -160,12 +147,8 @@ fun StatsScreen(
                                 .fillMaxSize(),
                             contentPadding = PaddingValues(16.dp)
                         ) {
-                            val readBooks: List<MBook> = if (!statsScreenViewModel.data.value.data.isNullOrEmpty()) {
-                                statsScreenViewModel.data.value.data!!.filter {
-                                    (it.userId == currentUser?.uid) && (it.finishedReading != null)
-                                }
-                            } else {
-                                emptyList()
+                            val readBooks = books.filter {
+                                it.finishedReading != null
                             }
 
                             items(readBooks) { book ->

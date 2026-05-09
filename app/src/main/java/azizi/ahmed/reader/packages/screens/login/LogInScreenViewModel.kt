@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.screens.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +8,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class LogInScreenViewModel: ViewModel() {
 //    val loadingState = MutableStateFlow(LoadingState.IDLE)
@@ -17,6 +17,8 @@ class LogInScreenViewModel: ViewModel() {
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
+    private val _errorMessage = MutableLiveData<String?>(null)
+    val errorMessage: LiveData<String?> = _errorMessage
 
     fun signInWithEmailAndPassword(
         email: String,
@@ -24,20 +26,14 @@ class LogInScreenViewModel: ViewModel() {
         navigateToHomeScreen: () -> Unit = {}
     )  = viewModelScope.launch {
         try {
-            auth.signInWithEmailAndPassword(
-                email,
-                password
-            ) .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("FB", "signInWithEmailAndPassword: success")
-                    navigateToHomeScreen()
-                } else {
-                    Log.d("FB", "signInWithEmailAndPassword: ${task.exception?.message}")
-                }
-            }
-
+            _loading.value = true
+            _errorMessage.value = null
+            auth.signInWithEmailAndPassword(email, password).await()
+            navigateToHomeScreen()
         } catch (ex: Exception) {
-            Log.d("FB", "signInWithEmailAndPassword: ${ex.message}")
+            _errorMessage.value = ex.message ?: "Could not sign in. Please try again."
+        } finally {
+            _loading.value = false
         }
     }
 

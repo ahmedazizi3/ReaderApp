@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.components.search
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +33,11 @@ fun SearchBookCard(
     book: Item,
     navigateToDetailsScreen: () -> Unit = {},
 ) {
+    val volumeInfo = book.volumeInfo
+    val thumbnail = volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://")
+    val authors = volumeInfo.authors.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "Unknown author"
+    val publishedDate = volumeInfo.publishedDate ?: "Unknown"
+    val categories = volumeInfo.categories.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "Uncategorized"
 
 
     Column(
@@ -77,9 +81,8 @@ fun SearchBookCard(
                     ),
                     color = Color.LightGray
                 ) {
-                    Log.d("ImageDebug", "URL: ${book.volumeInfo.imageLinks.thumbnail}")
                     AsyncImage(
-                        model = book.volumeInfo.imageLinks.thumbnail,
+                        model = thumbnail,
                                 contentDescription = "Book Cover",
                         modifier = modifier
                             .fillMaxSize()
@@ -94,26 +97,26 @@ fun SearchBookCard(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = book.volumeInfo.title,
+                        text = volumeInfo.title,
                         modifier = modifier.padding(8.dp),
                         color = Color.Black,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "By: ${book.volumeInfo.authors}",
+                        text = "By: $authors",
                         modifier = modifier.padding(start = 8.dp),
                         color = Color.Black,
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "Date: ${book.volumeInfo.publishedDate}",
+                        text = "Date: $publishedDate",
                         modifier = modifier.padding(start = 8.dp),
                         color = Color.Black,
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "Category: ${book.volumeInfo.categories}",
+                        text = "Category: $categories",
                         modifier = modifier.padding(start = 8.dp),
                         color = Color.Black,
                         fontSize = 16.sp

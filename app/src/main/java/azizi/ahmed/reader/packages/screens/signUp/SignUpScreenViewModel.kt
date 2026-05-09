@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class SignUpScreenViewModel: ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
@@ -18,6 +19,8 @@ class SignUpScreenViewModel: ViewModel() {
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
+    private val _errorMessage = MutableLiveData<String?>(null)
+    val errorMessage: LiveData<String?> = _errorMessage
 
     fun createUserWithEmailAndPassword(
         email: String,
@@ -26,25 +29,23 @@ class SignUpScreenViewModel: ViewModel() {
     )  =  viewModelScope.launch {
         if (_loading.value == false) {
             _loading.value = true
-            auth.createUserWithEmailAndPassword(
-                email,
-                password
-            ).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = task.result?.user
-                    val userName = user?.email?.split('@')?.get(0)
-                    val uid = user?.uid
-                    createUser(uid, userName)
-                    navigateToHomeScreen()
-                } else {
-                    Log.d("FB", "createUserWithEmailAndPassword: ${task.exception?.message}")
-                }
+            try {
+                _errorMessage.value = null
+                val result = auth.createUserWithEmailAndPassword(email, password).await()
+                val user = result.user
+                val userName = user?.email?.split('@')?.get(0)
+                val uid = user?.uid
+                createUser(uid, userName)
+                navigateToHomeScreen()
+            } catch (exception: Exception) {
+                _errorMessage.value = exception.message ?: "Could not create account. Please try again."
+            } finally {
                 _loading.value = false
             }
         }
     }
 
-    private fun createUser(userID: String?, userName: String?) {
+    private suspend fun createUser(userID: String?, userName: String?) {
         if (userID == null) {
             Log.e("FB", "UserID is null, cannot create Firestore user document.")
             return
@@ -62,12 +63,10 @@ class SignUpScreenViewModel: ViewModel() {
             isNotificationsEnabled = true
         ).toMap()
 
-        db.collection("users").document(userID).set(user)
-            .addOnSuccessListener {
-                Log.d("FB", "User document created successfully in Firestore.")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FB", "Error creating user document in Firestore: ${e.message}")
-            }
+        try {
+            db.collection("users").document(userID).set(user).await()
+        } catch (exception: Exception) {
+            Log.e("FB", "Error creating user document in Firestore: ${exception.message}")
+        }
     }
 }

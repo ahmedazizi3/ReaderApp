@@ -18,6 +18,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -52,6 +54,8 @@ fun SignUpScreen(
     }
     val visualTransformation = PasswordVisualTransformation()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val isLoading by signUpScreenViewModel.loading.observeAsState(false)
+    val errorMessage by signUpScreenViewModel.errorMessage.observeAsState()
 
 
     Column(
@@ -112,7 +116,8 @@ fun SignUpScreen(
             enabled = email.value.isNotEmpty()
                     && password.value.isNotEmpty() && password.value.length >= 8
                     && passwordConfirmation.value.isNotEmpty()
-                    && password.value == passwordConfirmation.value,
+                    && password.value == passwordConfirmation.value
+                    && !isLoading,
             onClick = {
                 keyboardController?.hide()
                 signUpScreenViewModel.createUserWithEmailAndPassword(
@@ -124,8 +129,6 @@ fun SignUpScreen(
                         Log.d("Form", "Navigating to Home Screen")
                     }
                 )
-                Log.d("Form", "Login Screen, Email: $email, Password: $password")
-
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor =  Color.Red,
@@ -138,8 +141,17 @@ fun SignUpScreen(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Sign Up",
+                text = if (isLoading) "Creating..." else "Sign Up",
                 fontSize = 25.sp
+            )
+        }
+
+        if (!errorMessage.isNullOrBlank()) {
+            Text(
+                text = errorMessage.orEmpty(),
+                color = Color.Red,
+                fontSize = 14.sp,
+                modifier = modifier.padding(horizontal = 16.dp)
             )
         }
 

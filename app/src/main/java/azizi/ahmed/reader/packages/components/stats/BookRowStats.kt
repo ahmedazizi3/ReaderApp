@@ -87,7 +87,7 @@ fun BookRowStats(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = book.title!!,
+                        text = book.title ?: "Untitled book",
                         modifier = modifier.padding(8.dp),
                         color = Color.Black,
                         fontSize = 20.sp,

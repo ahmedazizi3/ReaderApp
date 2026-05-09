@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.screens.login
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +17,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -50,6 +51,8 @@ fun LogInScreen(
     }
     val visualTransformation = PasswordVisualTransformation()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val isLoading by logInScreenViewModel.loading.observeAsState(false)
+    val errorMessage by logInScreenViewModel.errorMessage.observeAsState()
 
 
     Column(
@@ -95,14 +98,13 @@ fun LogInScreen(
         Spacer(modifier = modifier.height(25.dp))
 
         Button(
-            enabled = email.value.isNotEmpty() && password.value.isNotEmpty(),
+            enabled = email.value.isNotEmpty() && password.value.isNotEmpty() && !isLoading,
             onClick = {
                 keyboardController?.hide()
                 logInScreenViewModel.signInWithEmailAndPassword(
                     email = email.value,
                     password = password.value
                 ) {
-                    Log.d("FB", "LogInScreen: navigateToHomeScreen")
                     navigateToHomeScreen()
                 }
             },
@@ -117,8 +119,17 @@ fun LogInScreen(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Login",
+                text = if (isLoading) "Logging in..." else "Login",
                 fontSize = 25.sp
+            )
+        }
+
+        if (!errorMessage.isNullOrBlank()) {
+            Text(
+                text = errorMessage.orEmpty(),
+                color = Color.Red,
+                fontSize = 14.sp,
+                modifier = modifier.padding(horizontal = 16.dp)
             )
         }
 

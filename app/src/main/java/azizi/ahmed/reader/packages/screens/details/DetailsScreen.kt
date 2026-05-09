@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.screens.details
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,9 +21,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,14 +39,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.data.Resource
 import azizi.ahmed.reader.packages.model.Item
 import azizi.ahmed.reader.packages.model.MBook
 import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
@@ -64,9 +65,15 @@ fun DetailsScreen(
         value = detailsScreenViewModel.getBookInfo(bookId)
     }.value
 
-    val icon = remember { mutableStateOf(Icons.Default.FavoriteBorder) }
-    val isSaved = remember { mutableStateOf(false) }
     val googleBookId = bookInfo.data?.id
+    var isSaved by remember(googleBookId) { mutableStateOf(false) }
+    val icon = if (isSaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+
+    LaunchedEffect(googleBookId) {
+        isSaved = googleBookId?.let {
+            detailsScreenViewModel.isBookSaved(it)
+        } ?: false
+    }
 
     Column(
         modifier = modifier
@@ -85,35 +92,42 @@ fun DetailsScreen(
                     showProfile = false,
                     rowWidth = 245,
                     isDetailsScreen = true,
-                    icon = icon.value,
+                    icon = icon,
                     save = {
-                        isSaved.value = !isSaved.value
-                        icon.value = if (isSaved.value) {
-                            Icons.Default.Favorite
-                        } else {
-                            Icons.Default.FavoriteBorder
-                        }
-//                        Save the Book to the Firestore Database or Remove it from the Firestore Database
-                        if(isSaved.value) {
-//                            Save the Book to the Firestore Database
+                        val bookIdToToggle = googleBookId ?: return@ReaderAppBar
+
+                        if (!isSaved) {
+                            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@ReaderAppBar
+                            val volumeInfo = bookInfo.data.volumeInfo
                             val book = MBook(
-                                title = bookInfo.data?.volumeInfo?.title,
-                                author = bookInfo.data?.volumeInfo?.authors?.joinToString(", "),
-                                description = bookInfo.data?.volumeInfo?.description,
-                                categories = bookInfo.data?.volumeInfo?.categories?.joinToString(", "),
-                                publishedDate = bookInfo.data?.volumeInfo?.publishedDate,
-                                pageCount = bookInfo.data?.volumeInfo?.pageCount.toString(),
+                                title = volumeInfo.title,
+                                author = volumeInfo.authors.joinToString(", ")
+                                    .ifBlank { "Unknown author" },
+                                description = volumeInfo.description,
+                                categories = volumeInfo.categories.joinToString(", ")
+                                    .ifBlank { "Uncategorized" },
+                                publishedDate = volumeInfo.publishedDate,
+                                pageCount = volumeInfo.pageCount?.toString(),
                                 notes = "",
                                 rating = 0.0,
-                                googleBookId = googleBookId,
-                                userId = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                photoUrl = bookInfo.data?.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://")
+                                googleBookId = bookIdToToggle,
+                                userId = userId,
+                                photoUrl = volumeInfo.imageLinks?.thumbnail
+                                    ?.replace("http://", "https://")
                             )
-                            Log.d("PhotoURL Debug", "Saving photoUrl: ${bookInfo.data?.volumeInfo?.imageLinks?.thumbnail}")
-                            saveToFirebase(book)
+                            detailsScreenViewModel.saveBook(
+                                book = book,
+                                onSuccess = {
+                                    isSaved = true
+                                }
+                            )
                         } else {
-//                            Remove the Book from the Firestore Database
-
+                            detailsScreenViewModel.deleteSavedBook(
+                                googleBookId = bookIdToToggle,
+                                onSuccess = {
+                                    isSaved = false
+                                }
+                            )
                         }
                     },
                     logout = navigateToSearchOrHomeScreen
@@ -159,10 +173,8 @@ fun DetailsScreen(
                                 shadowElevation = 10.dp,
                                 tonalElevation = 10.dp
                             ) {
-                                Log.d("ImageDebug", "Details Thumbnail: ${book?.imageLinks?.thumbnail?.replace("http://", "https://")}")
-
                                 AsyncImage(
-                                    model = book?.imageLinks?.thumbnail,
+                                    model = book?.imageLinks?.thumbnail?.replace("http://", "https://"),
                                     contentDescription = "Book Image"
                                 )
                             }
@@ -191,7 +203,11 @@ fun DetailsScreen(
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                         append("Authors: ")
                                     }
-                                    append(book?.authors?.joinToString(", ") ?: "Unknown")
+                                    val authors = book?.authors
+                                        ?.takeIf { authors -> authors.isNotEmpty() }
+                                        ?.joinToString(", ")
+                                        ?: "Unknown"
+                                    append(authors)
                                 },
                                 modifier = modifier.align(Alignment.Start),
                                 fontSize = 20.sp,
@@ -217,7 +233,11 @@ fun DetailsScreen(
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                         append("Categories: ")
                                     }
-                                    append(book?.categories?.joinToString(", ") ?: "N/A")
+                                    val categories = book?.categories
+                                        ?.takeIf { categories -> categories.isNotEmpty() }
+                                        ?.joinToString(", ")
+                                        ?: "N/A"
+                                    append(categories)
                                 },
                                 modifier = modifier.align(Alignment.Start),
                                 fontSize = 20.sp,
@@ -280,31 +300,6 @@ fun DetailsScreen(
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-
-
-
-fun saveToFirebase(
-    book: MBook
-) {
-    val db = FirebaseFirestore.getInstance()
-    val dbCollection = db.collection("books")
-
-    if (book.toString().isNotBlank()) {
-        dbCollection.add(book).addOnSuccessListener { documentRef ->
-            val docId = documentRef.id
-            dbCollection.document(docId).update(
-                hashMapOf("id" to docId) as Map<String, Any>
-            ).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("SaveToFirebase", "Book saved successfully!")
-                }
-            }.addOnFailureListener {
-                Log.d("SaveToFirebase", "Book saving failed!")
             }
         }
     }

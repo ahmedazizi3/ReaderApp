@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import azizi.ahmed.reader.packages.components.common.ReaderAppBar
 import azizi.ahmed.reader.packages.components.search.SearchBookCard
 import azizi.ahmed.reader.packages.components.search.InputField
@@ -47,99 +48,108 @@ fun SearchScreen(
     }
 
     val bookList = searchScreenViewModel.listOfBooks
+    val errorMessage = searchScreenViewModel.errorMessage
 
-
-
-    Column(
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Color.White)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(
+                color = Color.White
+            ),
+        topBar = {
+            ReaderAppBar(
+                modifier = modifier,
+                title = "Search Books...",
+                showProfile = false,
+                icon = Icons.Default.Home,
+                logout = navigateToHomeScreen
+            )
+        }
     ) {
-        Scaffold(
+        Surface(
             modifier = modifier
                 .fillMaxSize()
+                .padding(it)
                 .background(
                     color = Color.White
-                ),
-            topBar = {
-                ReaderAppBar(
-                    modifier = modifier,
-                    title = "Search Books...",
-                    rowWidth = 250,
-                    showProfile = false,
-                    icon = Icons.Default.Home,
-                    logout = navigateToHomeScreen
                 )
-            }
         ) {
-            Surface(
+            Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(it)
                     .background(
                         color = Color.White
                     )
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
-                Column(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .background(
-                            color = Color.White
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
+                InputField(
+                    valueState = searchQueryState,
+                    labelId = "Enter a book name...",
+                    enabled = true,
+                    onAction = KeyboardActions {
+                        if (!valid) return@KeyboardActions
+                        searchScreenViewModel.searchBooks(searchQueryState.value.trim())
+                        searchQueryState.value = ""
+                        keyboardController?.hide()
+                    }
+                )
 
-                ) {
+                Spacer(modifier = modifier.height(16.dp))
 
-                    InputField(
-                        valueState = searchQueryState,
-                        labelId = "Enter a book name...",
-                        enabled = true,
-                        onAction = KeyboardActions {
-                            if (!valid) return@KeyboardActions
-                            searchScreenViewModel.searchBooks(searchQueryState.value.trim())
-                            searchQueryState.value = ""
-                            keyboardController?.hide()
-                        }
-                    )
-                    
-                    Spacer(modifier = modifier.height(16.dp))
-
-                    if (searchScreenViewModel.isLoading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                color = Color(
-                                    0xff12cbdf
-                                )
+                if (searchScreenViewModel.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color(
+                                0xff12cbdf
                             )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = modifier
-                                .fillMaxSize()
-                                .padding(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(items = bookList) { book ->
-
-                                SearchBookCard(
-                                    modifier = modifier,
-                                    book = book,
-                                    navigateToDetailsScreen = {
-                                        navigateToDetailsScreen(
-                                            book.id
-                                        )
-                                    }
-                                )
-                            }
+                        )
+                    }
+                } else if (!errorMessage.isNullOrBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = errorMessage,
+                            color = Color.Red
+                        )
+                    }
+                } else if (bookList.isEmpty() && searchQueryState.value.isNotBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No books found.",
+                            color = Color.Black
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(items = bookList) { book ->
+                            SearchBookCard(
+                                modifier = modifier,
+                                book = book,
+                                navigateToDetailsScreen = {
+                                    navigateToDetailsScreen(
+                                        book.id
+                                    )
+                                }
+                            )
                         }
                     }
                 }

@@ -10,7 +10,6 @@ import azizi.ahmed.reader.packages.data.Resource
 import azizi.ahmed.reader.packages.model.Item
 import azizi.ahmed.reader.packages.repository.BooksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,25 +19,25 @@ class SearchScreenViewModel @Inject constructor(
     private val booksRepository: BooksRepository
 ): ViewModel() {
     var listOfBooks: List<Item> by mutableStateOf(listOf())
-    var isLoading: Boolean by mutableStateOf(true)
-
-    init {
-        searchBooks("android")
-    }
+    var isLoading: Boolean by mutableStateOf(false)
+    var errorMessage: String? by mutableStateOf(null)
 
 
     fun searchBooks(query: String) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             if (query.isEmpty()) return@launch
+            isLoading = true
             try {
+                errorMessage = null
                 when (val response = booksRepository.getBooks(query)) {
                     is Resource.Success -> {
-                        listOfBooks = response.data!!
-                        if (listOfBooks.isNotEmpty()) isLoading = false
+                        listOfBooks = response.data.orEmpty()
+                        isLoading = false
                     }
                     is Resource.Error -> {
                         isLoading = false
                         listOfBooks = emptyList()
+                        errorMessage = response.message ?: "Could not load books. Please try again."
                         Log.e("Network", "searchBooks: Failed getting books")
                     }
                     else -> {
@@ -47,6 +46,7 @@ class SearchScreenViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 isLoading = false
+                errorMessage = e.message ?: "Could not load books. Please try again."
                 Log.d("Network", "searchBooks: ${e.message.toString()}")
             }
         }

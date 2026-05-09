@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,12 +41,16 @@ fun UpdateBookCard(
             onClick = { /* Your action */ },
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            if(bookInfo.data != null) {
+            val selectedBook = bookInfo.data?.firstOrNull { mBook ->
+                mBook.googleBookId == bookItemId
+            }
+
+            if(selectedBook != null) {
                 CardListItem(
-                    book = bookInfo.data!!.first { mBook ->
-                        mBook.googleBookId == bookItemId
-                    }
+                    book = selectedBook
                 )
+            } else {
+                Text(text = "Book was not found.")
             }
         }
     }

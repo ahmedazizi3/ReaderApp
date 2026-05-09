@@ -1,6 +1,6 @@
 package azizi.ahmed.reader.packages.model
 
 data class ReadingModes(
-    val image: Boolean,
-    val text: Boolean
+    val image: Boolean? = null,
+    val text: Boolean? = null
 )

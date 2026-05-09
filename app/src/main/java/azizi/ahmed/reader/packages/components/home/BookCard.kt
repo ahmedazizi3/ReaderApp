@@ -60,7 +60,7 @@ fun BookCard(
             modifier = modifier
                 .fillMaxSize()
                 .clickable {
-                    book.title?.let { navigateToUpdateScreen.invoke(it) }
+                    book.googleBookId?.let { navigateToUpdateScreen.invoke(it) }
                 },
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 4.dp
@@ -106,7 +106,7 @@ fun BookCard(
                         BookRating(
                             modifier = modifier
                                 .background(Color.White),
-                            rating = book.rating!!
+                            rating = book.rating ?: 0.0
                         )
                     }
                 }

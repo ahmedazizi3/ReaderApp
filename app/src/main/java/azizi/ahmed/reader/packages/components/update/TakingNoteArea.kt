@@ -1,6 +1,5 @@
 package azizi.ahmed.reader.packages.components.update
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,14 +29,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import azizi.ahmed.reader.R
 import azizi.ahmed.reader.packages.model.MBook
 import azizi.ahmed.reader.packages.screens.home.HomeScreenViewModel
 import azizi.ahmed.reader.packages.utils.formateDate
 import azizi.ahmed.reader.packages.utils.formateTime
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun TakingNoteArea(
@@ -123,8 +121,13 @@ fun TakingNoteArea(
                     )
                 }
             } else {
+                val startedReading = book.startedReading
                 Text(
-                    text = "Started on: \n${formateDate(book.startedReading!!)}\nat: ${formateTime(book.startedReading!!)}",
+                    text = if (startedReading != null) {
+                        "Started on: \n${formateDate(startedReading)}\nat: ${formateTime(startedReading)}"
+                    } else {
+                        "Started Reading"
+                    },
                     color = Color(
                         0xff12cbdf
                     ),
@@ -163,8 +166,13 @@ fun TakingNoteArea(
                     )
                 }
             } else {
+                val finishedReading = book.finishedReading
                 Text(
-                    text = "Finished on: \n${formateDate(book.finishedReading!!)}\nat: ${formateTime(book.finishedReading!!)}",
+                    text = if (finishedReading != null) {
+                        "Finished on: \n${formateDate(finishedReading)}\nat: ${formateTime(finishedReading)}"
+                    } else {
+                        "Finished Reading"
+                    },
                     color = Color(
                         0xff12cbdf
                     ),
@@ -212,7 +220,7 @@ fun TakingNoteArea(
             "notes" to noteValue.value,
             "rating" to ratingValue.intValue,
             "started_reading" to isStartedTimeStamp
-        ) as Map<String, Any>
+        )
         IconButton(
             onClick = {},
             modifier = modifier.weight(0.5f),
@@ -229,20 +237,17 @@ fun TakingNoteArea(
                     )
                     .clickable {
                         if (bookUpdate) {
-                            FirebaseFirestore
-                                .getInstance()
-                                .collection("books")
-                                .document(book.id!!)
-                                .update(bookToUpdate)
-                                .addOnCompleteListener {
+                            updateScreenViewModel.updateBook(
+                                bookId = book.id,
+                                updates = bookToUpdate,
+                                onSuccess = {
                                     Toast.makeText(context, "Book Updated", Toast.LENGTH_SHORT).show()
-
                                     navigateToHomeScreenWithRecomposition()
-                                    Log.d("TAG", "TakingNoteArea: ")
+                                },
+                                onError = { errorMessage ->
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                                 }
-                                .addOnFailureListener {
-                                    Log.w("TAG", "Error updating the book: ")
-                                }
+                            )
                         }
                     },
                 color = Color(0xff12cbdf)
@@ -271,21 +276,18 @@ fun TakingNoteArea(
                 message = stringResource(id = R.string.sure) + "\n" + stringResource(id = R.string.action),
                 openDialog = openDialog
             ) {
-                FirebaseFirestore
-                    .getInstance()
-                    .collection("books")
-                    .document(book.id!!)
-                    .delete()
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            openDialog.value = false
-                            Toast.makeText(context, "Book Deleted", Toast.LENGTH_SHORT).show()
-                            navigateToHomeScreenWithRecomposition()
-                        } else {
-                            openDialog.value = false
-                            Toast.makeText(context, "Error Deleting Book", Toast.LENGTH_SHORT).show()
-                        }
+                updateScreenViewModel.deleteBook(
+                    bookId = book.id,
+                    onSuccess = {
+                        openDialog.value = false
+                        Toast.makeText(context, "Book Deleted", Toast.LENGTH_SHORT).show()
+                        navigateToHomeScreenWithRecomposition()
+                    },
+                    onError = { errorMessage ->
+                        openDialog.value = false
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     }
+                )
             }
         }
 

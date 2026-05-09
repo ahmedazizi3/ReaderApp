@@ -1,6 +1,6 @@
 package azizi.ahmed.reader.packages.model
 
 data class Epub(
-    val acsTokenLink: String,
-    val isAvailable: Boolean
+    val acsTokenLink: String? = null,
+    val isAvailable: Boolean? = null
 )
