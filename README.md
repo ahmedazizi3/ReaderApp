@@ -2,6 +2,10 @@
 
 Reader is a Kotlin Android application for discovering books, saving them to a personal library, tracking reading progress, and reviewing simple reading statistics. It uses Jetpack Compose for the UI, Firebase for authentication and cloud persistence, and the Google Books API for book search and metadata.
 
+## Latest Release
+
+Download the latest release from GitHub: [Reader App v1.1.0](https://github.com/ahmedazizi3/ReaderApp/releases/tag/v1.1.0).
+
 ## Problem It Solves
 
 Book discovery and reading progress often end up split between search results, notes apps, screenshots, and memory. Reader brings those flows into one mobile app:
