@@ -6,6 +6,10 @@ Reader is a Kotlin Android application for discovering books, saving them to a p
 
 Download the latest release from GitHub: [Reader App v1.1.0](https://github.com/ahmedazizi3/ReaderApp/releases/tag/v1.1.0).
 
+## Demo Video
+
+Watch the app walkthrough: [Reader-Screen-Record.mp4](Reader%20Application/Reader-Screen-Record.mp4).
+
 ## Problem It Solves
 
 Book discovery and reading progress often end up split between search results, notes apps, screenshots, and memory. Reader brings those flows into one mobile app:
