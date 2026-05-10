@@ -8,7 +8,7 @@ Download the latest release from GitHub: [Reader App v1.1.0](https://github.com/
 
 ## Demo
 
-[![Watch Demo](https://img.youtube.com/vi/mA0T5VA4jAY/0.jpg)](https://www.youtube.com/watch?v=mA0T5VA4jAY)
+[![Watch Demo](https://img.youtube.com/vi/mA0T5VA4jAY/0.jpg)](https://youtube.com/shorts/mA0T5VA4jAY)
 
 ## Problem It Solves
 
